@@ -21,41 +21,44 @@ const Contact = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setStatus({});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setStatus({});
-
-    try {
-      const res = await fetch("/api/contact", {
+  try {
+    const res = await fetch(
+      "https://shell-pearl-chemicals.onrender.com/api/contact",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setStatus({ type: "success", msg: data.message });
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          location: "",
-          product: "",
-          quantity: "",
-          message: ""
-        });
-      } else {
-        setStatus({ type: "error", msg: data.message });
       }
-    } catch {
-      setStatus({ type: "error", msg: "Server error. Try again later." });
-    } finally {
-      setLoading(false);
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setStatus({ type: "success", msg: data.message });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        product: "",
+        quantity: "",
+        message: ""
+      });
+    } else {
+      setStatus({ type: "error", msg: data.message });
     }
-  };
+  } catch {
+    setStatus({ type: "error", msg: "Server error. Try again later." });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="contact-page">
