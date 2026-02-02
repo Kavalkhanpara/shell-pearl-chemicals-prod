@@ -1,4 +1,3 @@
-// backend/server.js
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -11,20 +10,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-/* ===== FIX __dirname ===== */
+// Fix __dirname for ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* ===== MIDDLEWARE ===== */
-app.use(cors({ origin: "*" }));
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-/* ================= CONTACT API (BREVO HTTP API) ================= */
+// ================= CONTACT API (BREVO REST API) =================
 app.post("/api/contact", async (req, res) => {
-  console.log("🔥 /api/contact HIT", req.body);
+  console.log("📩 Contact API hit");
 
   const { name, email, phone, location, product, quantity, message } = req.body;
-
 
   if (!name || !email || !phone || !location || !product || !quantity || !message) {
     return res.status(400).json({
@@ -34,10 +32,6 @@ app.post("/api/contact", async (req, res) => {
   }
 
   try {
-    console.log("🚀 Sending email via Brevo API");
-    console.log("API KEY:", process.env.BREVO_API_KEY ? "FOUND" : "MISSING");
-
-
     await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
@@ -45,7 +39,11 @@ app.post("/api/contact", async (req, res) => {
           name: "Shell & Pearl Chemicals",
           email: process.env.BREVO_SENDER,
         },
-        to: [{ email: process.env.BREVO_RECEIVER }],
+        to: [
+          {
+            email: process.env.BREVO_RECEIVER,
+          },
+        ],
         subject: `📩 New Chemical Inquiry - ${name}`,
         htmlContent: `
           <h2>New Inquiry</h2>
@@ -65,7 +63,6 @@ app.post("/api/contact", async (req, res) => {
           "api-key": process.env.BREVO_API_KEY,
           "Content-Type": "application/json",
         },
-        timeout: 10000,
       }
     );
 
@@ -83,7 +80,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-/* ================= SERVE FRONTEND ================= */
+// ================= SERVE FRONTEND =================
 const distPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(distPath));
 
@@ -91,7 +88,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
-/* ================= START SERVER ================= */
+// ================= START SERVER =================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
