@@ -21,9 +21,10 @@ app.use(express.json());
 
 /* ================= CONTACT API (BREVO HTTP API) ================= */
 app.post("/api/contact", async (req, res) => {
-  console.log("📩 Contact API hit");
+  console.log("🔥 /api/contact HIT", req.body);
 
   const { name, email, phone, location, product, quantity, message } = req.body;
+
 
   if (!name || !email || !phone || !location || !product || !quantity || !message) {
     return res.status(400).json({
