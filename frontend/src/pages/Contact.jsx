@@ -1,68 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope } from "react-icons/fa";
 import Footer from "../components/footer/Footer";
 import labBg from "../assets/lab.png";
 import "./contact.css";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
-    product: "",
-    quantity: "",
-    message: ""
-  });
-
-  const [status, setStatus] = useState({ type: "", msg: "" });
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setStatus({});
-
-  try {
-    const res = await fetch(
-      "https://shell-pearl-chemicals.onrender.com/api/contact",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
-
-    const data = await res.json();
-
-    if (data.success) {
-      setStatus({ type: "success", msg: data.message });
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        location: "",
-        product: "",
-        quantity: "",
-        message: ""
-      });
-    } else {
-      setStatus({ type: "error", msg: data.message });
-    }
-  } catch {
-    setStatus({ type: "error", msg: "Server error. Try again later." });
-  } finally {
-    setLoading(false);
-  }
-};
-
-
   return (
     <div className="contact-page">
-      <div className="contact-banner" style={{ backgroundImage: `url(${labBg})` }}>
+      <div
+        className="contact-banner"
+        style={{ backgroundImage: `url(${labBg})` }}
+      >
         <div className="banner-overlay">
           <div className="banner-content centered-banner">
             <div className="left-border" />
@@ -80,34 +28,40 @@ const handleSubmit = async (e) => {
           <h3>Contact For Any Query</h3>
 
           <div className="contact-details">
-            <div className="contact-item"><FaMapMarkerAlt /> Ankleshwar GIDC, Bharuch, INDIA</div>
-            <div className="contact-item"><FaPhone /> +91 92743 23212</div>
-            <div className="contact-item"><FaEnvelope /> shellandpearlchemicals@gmail.com</div>
+            <div className="contact-item">
+              <FaMapMarkerAlt /> Ankleshwar GIDC, Bharuch, INDIA
+            </div>
+            <div className="contact-item">
+              <FaPhone /> +91 92743 23212
+            </div>
+            <div className="contact-item">
+              <FaEnvelope /> shellandpearlchemicals@gmail.com
+            </div>
           </div>
         </div>
 
         <div className="contact-form">
           <h2>Contact Us</h2>
 
-          {/* ✅ ALERT MESSAGE */}
-          {status.msg && (
-            <div className={`form-alert ${status.type}`}>
-              {status.msg}
-            </div>
-          )}
+          {/* ✅ FORM GOES DIRECTLY TO EMAIL */}
+          <form
+            action="https://formspree.io/f/xdadleqd"
+            method="POST"
+          >
+            <input name="name" placeholder="Your Name" required />
+            <input name="phone" placeholder="Your Mobile" required />
+            <input name="email" type="email" placeholder="Your Email" required />
+            <input name="location" placeholder="Your Location" required />
+            <input name="product" placeholder="Product You Want" required />
+            <input name="quantity" placeholder="Quantity / Size" required />
+            <textarea
+              name="message"
+              placeholder="Enter your requirement"
+              required
+            />
 
-          <form onSubmit={handleSubmit}>
-            <input name="name" placeholder="Your Name" required value={formData.name} onChange={handleChange} />
-            <input name="phone" placeholder="Your Mobile" required value={formData.phone} onChange={handleChange} />
-            <input name="email" placeholder="Your Email" required value={formData.email} onChange={handleChange} />
-            <input name="location" placeholder="Your Location" required value={formData.location} onChange={handleChange} />
-            <input name="product" placeholder="Product You Want" required value={formData.product} onChange={handleChange} />
-            <input name="quantity" placeholder="Quantity / Size" required value={formData.quantity} onChange={handleChange} />
-            <textarea name="message" placeholder="Enter your requirement" required value={formData.message} onChange={handleChange} />
-
-            {/* ✅ PROPER STYLED BUTTON */}
-            <button type="submit" className="contact-submit-btn" disabled={loading}>
-              {loading ? "Sending..." : "Submit Inquiry"}
+            <button type="submit" className="contact-submit-btn">
+              Submit Inquiry
             </button>
           </form>
         </div>
